@@ -1,0 +1,45 @@
+/**
+ * OrcaLog — Profiles API (Web Module)
+ *
+ * Thin facade for user profile operations.
+ */
+
+import { getCurrentUser, requireAuth } from '../utils/auth';
+import { tryCatch } from '../utils/result';
+import * as profilesService from '../services/profiles-service';
+
+/**
+ * Get or create the current user's profile.
+ * Called on page load to ensure profile exists.
+ * @returns {Promise<ApiResult>}
+ */
+export async function getMyProfile() {
+  return tryCatch(async () => {
+    const user = await getCurrentUser();
+    return profilesService.getOrCreateProfile(user);
+  });
+}
+
+/**
+ * Update the current user's preferences (language, theme, etc.).
+ * @param {Object} preferences
+ * @returns {Promise<ApiResult>}
+ */
+export async function updateMyPreferences(preferences) {
+  return tryCatch(async () => {
+    const userId = await requireAuth();
+    return profilesService.updatePreferences(userId, preferences);
+  });
+}
+
+/**
+ * Update the current user's profile fields.
+ * @param {Object} data - { username, fullName, avatar, preferences }
+ * @returns {Promise<ApiResult>}
+ */
+export async function updateMyProfile(data) {
+  return tryCatch(async () => {
+    const userId = await requireAuth();
+    return profilesService.updateProfile(userId, data);
+  });
+}

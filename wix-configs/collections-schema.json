@@ -1,0 +1,114 @@
+{
+  "_comment": "Reference schema for OrcaLog Wix Data Collections. Use this as a guide when manually creating collections in the Wix CMS.",
+  "collections": [
+    {
+      "name": "DiveEntries",
+      "displayName": "Dive Entries",
+      "description": "Spearfishing and diving log entries",
+      "permissions": {
+        "read": "Member Author",
+        "insert": "Member",
+        "update": "Member Author",
+        "delete": "Member Author"
+      },
+      "fields": [
+        { "key": "userId", "type": "Text", "displayName": "User ID", "required": true },
+        { "key": "date", "type": "Date", "displayName": "Date", "required": true },
+        { "key": "time", "type": "Text", "displayName": "Time (HH:mm)" },
+        { "key": "startTime", "type": "Text", "displayName": "Start Time" },
+        { "key": "endTime", "type": "Text", "displayName": "End Time" },
+        { "key": "location", "type": "Text", "displayName": "Location" },
+        { "key": "detailedLocation", "type": "Text", "displayName": "Detailed Location (private)" },
+        { "key": "coordinates", "type": "Object", "displayName": "Coordinates { lat, lng }" },
+        { "key": "depth", "type": "Number", "displayName": "Depth (m)" },
+        { "key": "duration", "type": "Number", "displayName": "Duration (minutes)" },
+        { "key": "visibility", "type": "Number", "displayName": "Visibility (m)" },
+        { "key": "weather", "type": "Object", "displayName": "Weather data" },
+        { "key": "equipment", "type": "Object", "displayName": "Equipment data" },
+        { "key": "fishingTypes", "type": "Array", "displayName": "Fishing Types" },
+        { "key": "catches", "type": "Array", "displayName": "Catches" },
+        { "key": "photos", "type": "Array", "displayName": "Photo URLs" },
+        { "key": "notes", "type": "Text", "displayName": "Notes" },
+        { "key": "rating", "type": "Number", "displayName": "Rating (1-5)", "required": true }
+      ],
+      "fieldShapes": {
+        "weather": {
+          "conditions": "Array<'sunny'|'cloudy'|'rainy'|'stormy'|'foggy'>",
+          "temperature": "Number (air °C)",
+          "waterTemperature": "Number (°C)",
+          "windDirection": "Text (N,NE,E,SE,S,SW,W,NW)",
+          "windIntensity": "Number (0-10)",
+          "currentDirection": "Text",
+          "currentIntensity": "Number (0-10)"
+        },
+        "equipment": {
+          "mask": "Text",
+          "fins": "Text",
+          "suit": "Text",
+          "weight": "Number (kg)",
+          "gear": "Array<Text>"
+        },
+        "catches": {
+          "id": "Text",
+          "species": "Text",
+          "weight": "Number (grams, optional)",
+          "length": "Number (cm, optional)",
+          "quantity": "Number",
+          "method": "Text",
+          "released": "Boolean",
+          "photo": "Text (URL)",
+          "notes": "Text"
+        }
+      }
+    },
+    {
+      "name": "UserProfiles",
+      "displayName": "User Profiles",
+      "description": "Per-member profile and preferences",
+      "permissions": {
+        "read": "Member Author",
+        "insert": "Admin",
+        "update": "Member Author",
+        "delete": "Admin"
+      },
+      "fields": [
+        { "key": "userId", "type": "Text", "displayName": "User ID", "required": true },
+        { "key": "username", "type": "Text", "displayName": "Username" },
+        { "key": "email", "type": "Text", "displayName": "Email" },
+        { "key": "fullName", "type": "Text", "displayName": "Full Name" },
+        { "key": "avatar", "type": "Text", "displayName": "Avatar URL" },
+        { "key": "role", "type": "Text", "displayName": "Role (user|admin|moderator)" },
+        { "key": "preferences", "type": "Object", "displayName": "Preferences" }
+      ],
+      "fieldShapes": {
+        "preferences": {
+          "language": "'he'|'en'",
+          "units": "'metric'|'imperial'",
+          "theme": "'light'|'dark'",
+          "defaultLocation": "Text",
+          "notifications": {
+            "diveReminders": "Boolean",
+            "weatherAlerts": "Boolean",
+            "safetyTips": "Boolean"
+          }
+        }
+      }
+    },
+    {
+      "name": "AppConfig",
+      "displayName": "App Config",
+      "description": "Single document with application configuration",
+      "permissions": {
+        "read": "Admin",
+        "insert": "Admin",
+        "update": "Admin",
+        "delete": "Admin"
+      },
+      "fields": [
+        { "key": "adminEmails", "type": "Array", "displayName": "Admin Emails" },
+        { "key": "whatsappGroupLink", "type": "Text", "displayName": "WhatsApp Group Link" }
+      ],
+      "notes": "Only one document should exist in this collection. Call the seedConfig() backend function to initialize it."
+    }
+  ]
+}

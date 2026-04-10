@@ -1,0 +1,22 @@
+# Wix Velo
+.wix/
+node_modules/
+.corvid/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Env
+.env
+.env.local
+
+# Logs
+*.log
+npm-debug.log*
