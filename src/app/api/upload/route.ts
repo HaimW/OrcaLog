@@ -16,15 +16,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No file" }, { status: 400 });
     }
 
+    // Use Vercel Blob in production, local disk in dev
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+      const { put } = await import("@vercel/blob");
+      const ext = path.extname(file.name) || ".jpg";
+      const blob = await put(`uploads/${uuidv4()}${ext}`, file, { access: "public" });
+      return NextResponse.json({ url: blob.url });
+    }
+
+    // Local dev fallback
     const ext = path.extname(file.name) || ".jpg";
     const filename = `${uuidv4()}${ext}`;
     const uploadDir = path.join(process.cwd(), "public", "uploads");
     await mkdir(uploadDir, { recursive: true });
-    const filePath = path.join(uploadDir, filename);
-
-    const bytes = await file.arrayBuffer();
-    await writeFile(filePath, Buffer.from(bytes));
-
+    await writeFile(path.join(uploadDir, filename), Buffer.from(await file.arrayBuffer()));
     return NextResponse.json({ url: `/uploads/${filename}` });
   } catch (error: any) {
     console.error("Upload error:", error);
