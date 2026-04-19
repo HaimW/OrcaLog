@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id              String      @id @default(cuid())
+  email           String      @unique
+  password        String
+  fullName        String?
+  username        String?
+  avatar          String?
+  role            String      @default("user")
+  language        String      @default("he")
+  units           String      @default("metric")
+  theme           String      @default("light")
+  defaultLocation String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  entries         DiveEntry[]
+}
+
+model DiveEntry {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+  date             DateTime
+  time             String?
+  startTime        String?
+  endTime          String?
+  location         String?
+  detailedLocation String?
+  coordLat         Float?
+  coordLng         Float?
+  depth            Float?
+  duration         Int?
+  visibility       Float?
+  weather          String?
+  equipment        String?
+  fishingTypes     String?
+  catches          String?
+  photos           String?
+  notes            String?
+  rating           Int
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([userId])
+  @@index([date])
+  @@index([location])
+}
+
+model AppConfig {
+  id                String  @id @default("singleton")
+  adminEmails       String  @default("[]")
+  whatsappGroupLink String?
+}
