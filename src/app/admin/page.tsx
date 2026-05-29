@@ -199,19 +199,21 @@ export default function AdminPage() {
             placeholder="https://chat.whatsapp.com/..."
           />
         </div>
-        <div>
-          <label className="label">Admin Emails (comma-separated)</label>
-          <input
-            type="text"
-            value={adminEmailsInput}
-            onChange={(e) => setAdminEmailsInput(e.target.value)}
-            className="input"
-            placeholder="admin@example.com, other@example.com"
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            Users whose email is in this list get admin role on next login. <strong>{ROOT_EMAIL}</strong> is always included.
-          </p>
-        </div>
+        {isRoot && (
+          <div>
+            <label className="label">Admin Emails (comma-separated)</label>
+            <input
+              type="text"
+              value={adminEmailsInput}
+              onChange={(e) => setAdminEmailsInput(e.target.value)}
+              className="input"
+              placeholder="admin@example.com, other@example.com"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Users with these emails get admin role on next login. Your email is always included.
+            </p>
+          </div>
+        )}
         <div className="flex items-center gap-3">
           <button onClick={handleSaveConfig} disabled={saving} className="btn btn-primary">
             {saving ? "..." : t("admin.saveConfig")}
