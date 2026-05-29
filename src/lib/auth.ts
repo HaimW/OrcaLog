@@ -25,18 +25,19 @@ export const authOptions: NextAuthOptions = {
         const isValid = await bcrypt.compare(credentials.password, user.password);
         if (!isValid) return null;
 
-        // Auto-detect admin role
+        // Auto-promote to admin if email is in the admin list
+        let role = user.role;
         const config = await prisma.appConfig.findUnique({
           where: { id: "singleton" },
         });
         if (config) {
           const adminEmails: string[] = JSON.parse(config.adminEmails);
-          if (adminEmails.includes(user.email) && user.role !== "admin") {
+          if (adminEmails.includes(user.email) && role !== "admin") {
             await prisma.user.update({
               where: { id: user.id },
               data: { role: "admin" },
             });
-            user.role = "admin";
+            role = "admin";
           }
         }
 
@@ -44,7 +45,7 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           email: user.email,
           name: user.fullName || user.username || user.email,
-          role: user.role,
+          role,
           language: user.language,
         };
       },
