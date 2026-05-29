@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "User" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "fullName" TEXT,
@@ -11,25 +11,27 @@ CREATE TABLE "User" (
     "units" TEXT NOT NULL DEFAULT 'metric',
     "theme" TEXT NOT NULL DEFAULT 'light',
     "defaultLocation" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "DiveEntry" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "date" DATETIME NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL,
     "time" TEXT,
     "startTime" TEXT,
     "endTime" TEXT,
     "location" TEXT,
     "detailedLocation" TEXT,
-    "coordLat" REAL,
-    "coordLng" REAL,
-    "depth" REAL,
+    "coordLat" DOUBLE PRECISION,
+    "coordLng" DOUBLE PRECISION,
+    "depth" DOUBLE PRECISION,
     "duration" INTEGER,
-    "visibility" REAL,
+    "visibility" DOUBLE PRECISION,
     "weather" TEXT,
     "equipment" TEXT,
     "fishingTypes" TEXT,
@@ -37,16 +39,19 @@ CREATE TABLE "DiveEntry" (
     "photos" TEXT,
     "notes" TEXT,
     "rating" INTEGER NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "DiveEntry_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "DiveEntry_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "AppConfig" (
-    "id" TEXT NOT NULL PRIMARY KEY DEFAULT 'singleton',
+    "id" TEXT NOT NULL DEFAULT 'singleton',
     "adminEmails" TEXT NOT NULL DEFAULT '[]',
-    "whatsappGroupLink" TEXT
+    "whatsappGroupLink" TEXT,
+
+    CONSTRAINT "AppConfig_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -60,3 +65,6 @@ CREATE INDEX "DiveEntry_date_idx" ON "DiveEntry"("date");
 
 -- CreateIndex
 CREATE INDEX "DiveEntry_location_idx" ON "DiveEntry"("location");
+
+-- AddForeignKey
+ALTER TABLE "DiveEntry" ADD CONSTRAINT "DiveEntry_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
