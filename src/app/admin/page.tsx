@@ -20,7 +20,6 @@ export default function AdminPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [users, setUsers] = useState<any[]>([]);
-  const [totalEntries, setTotalEntries] = useState(0);
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -36,15 +35,8 @@ export default function AdminPage() {
   }, [isAdmin]);
 
   async function loadData() {
-    const [usersRes, entriesRes] = await Promise.all([
-      fetch("/api/users"),
-      fetch("/api/entries?take=1"),
-    ]);
+    const usersRes = await fetch("/api/users");
     if (usersRes.ok) setUsers(await usersRes.json());
-    if (entriesRes.ok) {
-      const d = await entriesRes.json();
-      setTotalEntries(d.totalCount ?? 0);
-    }
     const configRes = await fetch("/api/config");
     if (configRes.ok) {
       const c = await configRes.json();
