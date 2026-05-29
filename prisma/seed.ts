@@ -8,7 +8,7 @@ async function main() {
     update: {},
     create: {
       id: "singleton",
-      adminEmails: JSON.stringify(["admin@orcalog.com"]),
+      adminEmails: JSON.stringify(["yafim.sh@gmail.com"]),
       whatsappGroupLink: "",
     },
   });

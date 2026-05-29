@@ -14,9 +14,12 @@ export async function GET() {
       username: true,
       role: true,
       createdAt: true,
+      _count: { select: { entries: true } },
     },
     orderBy: { createdAt: "desc" },
   });
 
-  return NextResponse.json(users);
+  return NextResponse.json(
+    users.map((u) => ({ ...u, entryCount: u._count.entries, _count: undefined }))
+  );
 }
