@@ -2,17 +2,109 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #f5f9fb;
-  --foreground: #0a1929;
+/* ─── Theme Variables ──────────────────────────────────────────── */
+
+:root,
+[data-theme="light"] {
+  --color-ocean-deep: #0B4F6C;
+  --color-ocean-teal: #1B98A6;
+  --color-ocean-light: #E0F7FA;
+  --color-coral: #FF6B6B;
+
+  --bg: #f5f9fb;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --input-bg: #ffffff;
+  --input-border: #d1d5db;
+  --text: #374151;
+  --text-muted: #6b7280;
+  --header-bg: #0B4F6C;
+  --surface-hover: #f9fafb;
+  --surface-alt: #f3f4f6;
 }
 
+[data-theme="deep-water"] {
+  --color-ocean-deep: #0d7a88;
+  --color-ocean-teal: #1fa8b8;
+  --color-ocean-light: #1a3d52;
+  --color-coral: #ff8a80;
+
+  --bg: #071e2e;
+  --card-bg: #0d2d42;
+  --card-border: #1a3d52;
+  --input-bg: #0a243a;
+  --input-border: #1e4a62;
+  --text: #cce7f0;
+  --text-muted: #7aafc8;
+  --header-bg: #051525;
+  --surface-hover: #112a3e;
+  --surface-alt: #102538;
+}
+
+[data-theme="dark-deep-water"] {
+  --color-ocean-deep: #0a6575;
+  --color-ocean-teal: #158595;
+  --color-ocean-light: #0f2535;
+  --color-coral: #ff6b6b;
+
+  --bg: #030f18;
+  --card-bg: #07192a;
+  --card-border: #0f2535;
+  --input-bg: #05131f;
+  --input-border: #113045;
+  --text: #7ab0c8;
+  --text-muted: #4a7a90;
+  --header-bg: #020b12;
+  --surface-hover: #0a1f30;
+  --surface-alt: #081828;
+}
+
+[data-theme="clear-water"] {
+  --color-ocean-deep: #006064;
+  --color-ocean-teal: #00acc1;
+  --color-ocean-light: #b2ebf2;
+  --color-coral: #ef5350;
+
+  --bg: #e0f7fa;
+  --card-bg: #f0fdff;
+  --card-border: #b2ebf2;
+  --input-bg: #ffffff;
+  --input-border: #80deea;
+  --text: #00252a;
+  --text-muted: #006672;
+  --header-bg: #006064;
+  --surface-hover: #d0f4f9;
+  --surface-alt: #d0f4f9;
+}
+
+[data-theme="green-water"] {
+  --color-ocean-deep: #2e7d32;
+  --color-ocean-teal: #388e3c;
+  --color-ocean-light: #c8e6c9;
+  --color-coral: #e53935;
+
+  --bg: #e8f5e9;
+  --card-bg: #f1faf2;
+  --card-border: #c8e6c9;
+  --input-bg: #ffffff;
+  --input-border: #a5d6a7;
+  --text: #0a1f0d;
+  --text-muted: #388e3c;
+  --header-bg: #1b5e20;
+  --surface-hover: #dcedc8;
+  --surface-alt: #dcedc8;
+}
+
+/* ─── Base ─────────────────────────────────────────────────────── */
+
 body {
-  color: var(--foreground);
-  background: var(--background);
+  color: var(--text);
+  background: var(--bg);
   font-family: system-ui, -apple-system, sans-serif;
   min-height: 100vh;
 }
+
+/* ─── Components ───────────────────────────────────────────────── */
 
 @layer components {
   .btn {
@@ -21,22 +113,92 @@ body {
   .btn-primary {
     @apply bg-ocean-deep text-white hover:bg-ocean-teal;
   }
-  .btn-secondary {
-    @apply bg-white border border-gray-300 hover:bg-gray-50;
-  }
   .btn-danger {
     @apply bg-coral text-white hover:opacity-90;
   }
   .card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-100 p-4;
+    @apply rounded-xl shadow-sm border p-4;
+    background-color: var(--card-bg);
+    border-color: var(--card-border);
   }
   .input {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ocean-teal focus:border-transparent bg-white;
+    @apply w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-ocean-teal focus:border-transparent;
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--text);
   }
   .label {
-    @apply block text-sm font-medium text-gray-700 mb-1;
+    @apply block text-sm font-medium mb-1;
+    color: var(--text);
   }
   .section-title {
     @apply text-lg font-semibold text-ocean-deep mb-3;
   }
+}
+
+.btn-secondary {
+  @apply px-4 py-2 rounded-lg font-medium transition-colors border;
+  background-color: var(--card-bg);
+  border-color: var(--input-border);
+  color: var(--text);
+}
+.btn-secondary:hover {
+  background-color: var(--surface-hover);
+}
+
+/* ─── Header theming ───────────────────────────────────────────── */
+
+[data-theme="deep-water"] header,
+[data-theme="dark-deep-water"] header,
+[data-theme="clear-water"] header,
+[data-theme="green-water"] header {
+  background-color: var(--header-bg);
+}
+
+/* ─── Dark theme overrides ─────────────────────────────────────── */
+
+[data-theme="deep-water"],
+[data-theme="dark-deep-water"] {
+  color-scheme: dark;
+}
+
+[data-theme="deep-water"] .text-gray-600,
+[data-theme="deep-water"] .text-gray-700,
+[data-theme="deep-water"] .text-gray-800,
+[data-theme="dark-deep-water"] .text-gray-600,
+[data-theme="dark-deep-water"] .text-gray-700,
+[data-theme="dark-deep-water"] .text-gray-800 {
+  color: var(--text);
+}
+
+[data-theme="deep-water"] .text-gray-500,
+[data-theme="dark-deep-water"] .text-gray-500 {
+  color: var(--text-muted);
+}
+
+[data-theme="deep-water"] .border-gray-100,
+[data-theme="deep-water"] .border-gray-200,
+[data-theme="deep-water"] .border-gray-300,
+[data-theme="dark-deep-water"] .border-gray-100,
+[data-theme="dark-deep-water"] .border-gray-200,
+[data-theme="dark-deep-water"] .border-gray-300 {
+  border-color: var(--card-border);
+}
+
+[data-theme="deep-water"] .bg-gray-50,
+[data-theme="deep-water"] .bg-gray-100,
+[data-theme="dark-deep-water"] .bg-gray-50,
+[data-theme="dark-deep-water"] .bg-gray-100 {
+  background-color: var(--surface-alt);
+}
+
+[data-theme="deep-water"] .hover\:bg-gray-50:hover,
+[data-theme="dark-deep-water"] .hover\:bg-gray-50:hover {
+  background-color: var(--surface-hover);
+}
+
+[data-theme="deep-water"] select option,
+[data-theme="dark-deep-water"] select option {
+  background-color: var(--card-bg);
+  color: var(--text);
 }

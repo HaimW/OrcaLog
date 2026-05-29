@@ -10,11 +10,11 @@ const config: Config = {
     extend: {
       colors: {
         ocean: {
-          deep: "#0B4F6C",
-          teal: "#1B98A6",
-          light: "#E0F7FA",
+          deep: "var(--color-ocean-deep)",
+          teal: "var(--color-ocean-teal)",
+          light: "var(--color-ocean-light)",
         },
-        coral: "#FF6B6B",
+        coral: "var(--color-coral)",
       },
     },
   },
