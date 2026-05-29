@@ -30,9 +30,12 @@ export const FISHING_METHODS: BilingualItem[] = [
 ];
 
 export const LOCATION_REGIONS: BilingualItem[] = [
-  { id: "north", he: "צפון", en: "North" },
-  { id: "center", he: "מרכז", en: "Center" },
-  { id: "south", he: "דרום", en: "South" },
+  { id: "north", he: "צפון – ים תיכון", en: "North – Mediterranean" },
+  { id: "center", he: "מרכז – ים תיכון", en: "Center – Mediterranean" },
+  { id: "south_med", he: "דרום – ים תיכון", en: "South – Mediterranean" },
+  { id: "kinneret", he: "כנרת", en: "Sea of Galilee" },
+  { id: "dead_sea", he: "ים המלח", en: "Dead Sea" },
+  { id: "red_sea", he: "ים סוף – אילת", en: "Red Sea – Eilat" },
 ];
 
 export const COMPASS_DIRECTIONS: BilingualItem[] = [
@@ -70,20 +73,67 @@ export const COMMON_FISH_SPECIES: BilingualItem[] = [
 ];
 
 export const DIVING_LOCATIONS: LocationItem[] = [
-  { id: "eilat_dolphin_ship", he: "אילת – ספינת הדולפין", en: "Eilat – Dolphin Ship", region: "south" },
-  { id: "eilat_dolphin_reef", he: "אילת – ריף הדולפינים", en: "Eilat – Dolphin Reef", region: "south" },
-  { id: "eilat_coral_beach", he: "אילת – שמורת חוף האלמוגים", en: "Eilat – Coral Beach NP", region: "south" },
-  { id: "eilat_migdan", he: "אילת – חוף מגדן", en: "Eilat – Migdan Beach", region: "south" },
-  { id: "haifa_dado", he: "חיפה – חוף דדו", en: "Haifa – Dado Beach", region: "north" },
-  { id: "tel_aviv_tzuk", he: "תל אביב – חוף הצוק", en: "Tel Aviv – Tzuk", region: "center" },
-  { id: "netanya_gimbal", he: "נתניה – חוף גימבל", en: "Netanya – Gimbal Beach", region: "center" },
-  { id: "ashkelon_delila", he: "אשקלון – חוף דלילה", en: "Ashkelon – Delila Beach", region: "south" },
-  { id: "akko_golden", he: "עכו – חוף הזהב", en: "Akko – Golden Beach", region: "north" },
+  // ─── North Mediterranean ───────────────────────────────────────────────────
+  { id: "rosh_hanikra", he: "ראש הנקרה", en: "Rosh HaNikra", region: "north" },
   { id: "nahariya_galil", he: "נהריה – חוף הגליל", en: "Nahariya – Galil Beach", region: "north" },
-  { id: "kinneret_ginosar", he: "כנרת – גינוסר", en: "Kinneret – Ginosar", region: "north" },
-  { id: "kinneret_amnon", he: "כנרת – עמנון", en: "Kinneret – Amnon", region: "north" },
-  { id: "kinneret_migdal", he: "כנרת – מגדל", en: "Kinneret – Migdal", region: "north" },
-  { id: "dead_sea_ein_gedi", he: "ים המלח – עין גדי", en: "Dead Sea – Ein Gedi", region: "south" },
+  { id: "nahariya_gaaton", he: "נהריה – חוף געתון", en: "Nahariya – Gaaton Beach", region: "north" },
+  { id: "achziv", he: "אכזיב", en: "Achziv", region: "north" },
+  { id: "akko_argaman", he: "עכו – חוף ארגמן", en: "Akko – Argaman Beach", region: "north" },
+  { id: "akko_golden", he: "עכו – חוף הזהב", en: "Akko – Golden Beach", region: "north" },
+  { id: "haifa_bat_galim", he: "חיפה – בת גלים", en: "Haifa – Bat Galim", region: "north" },
+  { id: "haifa_dado", he: "חיפה – חוף דדו", en: "Haifa – Dado Beach", region: "north" },
+  { id: "haifa_carmel", he: "חיפה – חוף הכרמל", en: "Haifa – Carmel Beach", region: "north" },
+  { id: "atlit", he: "עתלית", en: "Atlit", region: "north" },
+  { id: "dor_beach", he: "חוף דור (תנטורה)", en: "Dor Beach (Tantura)", region: "north" },
+
+  // ─── Center Mediterranean ──────────────────────────────────────────────────
+  { id: "caesarea", he: "קיסריה", en: "Caesarea", region: "center" },
+  { id: "netanya_sironit", he: "נתניה – חוף סירונית", en: "Netanya – Sironit Beach", region: "center" },
+  { id: "netanya_blue", he: "נתניה – חוף הכחול", en: "Netanya – Blue Beach", region: "center" },
+  { id: "netanya_gimbal", he: "נתניה – חוף גימבל", en: "Netanya – Gimbal Beach", region: "center" },
+  { id: "netanya_north", he: "נתניה – חוף צפוני", en: "Netanya – North Beach", region: "center" },
+  { id: "herzliya_sidna_ali", he: "הרצליה – סידנא עלי", en: "Herzliya – Sidna Ali", region: "center" },
+  { id: "herzliya_arena", he: "הרצליה – חוף ארנה", en: "Herzliya – Arena Beach", region: "center" },
+  { id: "tel_aviv_gordon", he: "תל אביב – חוף גורדון", en: "Tel Aviv – Gordon Beach", region: "center" },
+  { id: "tel_aviv_hilton", he: "תל אביב – חוף הילטון", en: "Tel Aviv – Hilton Beach", region: "center" },
+  { id: "tel_aviv_frishman", he: "תל אביב – חוף פרישמן", en: "Tel Aviv – Frishman Beach", region: "center" },
+  { id: "tel_aviv_clore", he: "תל אביב – חוף קלור", en: "Tel Aviv – Charles Clore Beach", region: "center" },
+  { id: "tel_aviv_tzuk", he: "תל אביב – חוף הצוק", en: "Tel Aviv – Tzuk Beach", region: "center" },
+  { id: "bat_yam", he: "בת ים – חוף בת ים", en: "Bat Yam Beach", region: "center" },
+  { id: "palmachim", he: "חוף פלמחים", en: "Palmachim Beach", region: "center" },
+
+  // ─── South Mediterranean ───────────────────────────────────────────────────
+  { id: "ashdod_lido", he: "אשדוד – חוף לידו", en: "Ashdod – Lido Beach", region: "south_med" },
+  { id: "ashdod_delfinarium", he: "אשדוד – דלפינריום", en: "Ashdod – Delfinarium Beach", region: "south_med" },
+  { id: "nitzanim", he: "חוף ניצנים", en: "Nitzanim Beach", region: "south_med" },
+  { id: "ashkelon_barnea", he: "אשקלון – חוף ברנע", en: "Ashkelon – Barnea Beach", region: "south_med" },
+  { id: "ashkelon_delila", he: "אשקלון – חוף דלילה", en: "Ashkelon – Delila Beach", region: "south_med" },
+  { id: "zikim", he: "חוף זיקים", en: "Zikim Beach", region: "south_med" },
+
+  // ─── Sea of Galilee (Kinneret) ─────────────────────────────────────────────
+  { id: "kinneret_ginosar", he: "כנרת – גינוסר", en: "Kinneret – Ginosar", region: "kinneret" },
+  { id: "kinneret_amnon", he: "כנרת – חוף עמנון", en: "Kinneret – Amnon Beach", region: "kinneret" },
+  { id: "kinneret_migdal", he: "כנרת – מגדל", en: "Kinneret – Migdal", region: "kinneret" },
+  { id: "kinneret_ein_gev", he: "כנרת – עין גב", en: "Kinneret – Ein Gev", region: "kinneret" },
+  { id: "kinneret_lavnun", he: "כנרת – חוף לבנון", en: "Kinneret – Lavnun Beach", region: "kinneret" },
+  { id: "kinneret_gofra", he: "כנרת – גופרה", en: "Kinneret – Gofra Beach", region: "kinneret" },
+
+  // ─── Dead Sea ──────────────────────────────────────────────────────────────
+  { id: "dead_sea_ein_gedi", he: "ים המלח – עין גדי", en: "Dead Sea – Ein Gedi", region: "dead_sea" },
+  { id: "dead_sea_neve_zohar", he: "ים המלח – נווה זוהר", en: "Dead Sea – Neve Zohar", region: "dead_sea" },
+  { id: "dead_sea_mineral", he: "ים המלח – מינרל ביץ׳", en: "Dead Sea – Mineral Beach", region: "dead_sea" },
+
+  // ─── Red Sea (Eilat) ───────────────────────────────────────────────────────
+  { id: "eilat_north_beach", he: "אילת – חוף צפוני", en: "Eilat – North Beach", region: "red_sea" },
+  { id: "eilat_coral_beach", he: "אילת – שמורת חוף האלמוגים", en: "Eilat – Coral Beach NP", region: "red_sea" },
+  { id: "eilat_dolphin_reef", he: "אילת – ריף הדולפינים", en: "Eilat – Dolphin Reef", region: "red_sea" },
+  { id: "eilat_dolphin_ship", he: "אילת – ספינת הדולפין", en: "Eilat – Dolphin Ship", region: "red_sea" },
+  { id: "eilat_migdan", he: "אילת – חוף מגדן", en: "Eilat – Migdan Beach", region: "red_sea" },
+  { id: "eilat_princess", he: "אילת – חוף הנסיכה", en: "Eilat – Princess Beach", region: "red_sea" },
+  { id: "eilat_japanese_garden", he: "אילת – גן יפני", en: "Eilat – Japanese Garden", region: "red_sea" },
+  { id: "eilat_moses_rock", he: "אילת – סלע משה", en: "Eilat – Moses Rock", region: "red_sea" },
+  { id: "eilat_liberty_bell", he: "אילת – פעמון החירות", en: "Eilat – Liberty Bell", region: "red_sea" },
+  { id: "eilat_three_arches", he: "אילת – שלושת הקשתות", en: "Eilat – Three Arches", region: "red_sea" },
 ];
 
 export const DEPTH_RANGES: RangeItem[] = [

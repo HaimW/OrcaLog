@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { useLanguage } from "@/i18n/LanguageProvider";
@@ -9,6 +9,7 @@ import { PhotoUpload } from "./PhotoUpload";
 import { Modal } from "@/components/ui/Modal";
 import {
   DIVING_LOCATIONS,
+  LOCATION_REGIONS,
   WEATHER_CONDITIONS,
   COMPASS_DIRECTIONS,
   EQUIPMENT_TYPES,
@@ -19,6 +20,21 @@ import {
 } from "@/shared/constants";
 import { validateEntryForm } from "@/shared/validators";
 import { formatDateForInput } from "@/shared/formatters";
+
+function nowTime() {
+  const now = new Date();
+  return `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+}
+
+function calcDuration(start: string, end: string): string {
+  if (!start || !end) return "";
+  const [sh, sm] = start.split(":").map(Number);
+  const [eh, em] = end.split(":").map(Number);
+  const mins = eh * 60 + em - (sh * 60 + sm);
+  return mins > 0 ? String(mins) : "";
+}
+
+const KNOWN_LOCATION_IDS = new Set(DIVING_LOCATIONS.map((l) => l.id));
 
 interface EntryFormProps {
   initial?: any;
@@ -47,13 +63,28 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
   const [date, setDate] = useState<string>(
     initial?.date ? formatDateForInput(initial.date) : formatDateForInput(new Date())
   );
-  const [time, setTime] = useState(initial?.time || "");
+  const [time, setTime] = useState(initial?.time || (!isEdit ? nowTime() : ""));
   const [startTime, setStartTime] = useState(initial?.startTime || "");
   const [endTime, setEndTime] = useState(initial?.endTime || "");
-  const [location, setLocation] = useState(initial?.location || "");
+
+  // Determine if the saved location is a custom (free-text) value
+  const initLocId = initial?.location || "";
+  const initIsCustom = !!initLocId && !KNOWN_LOCATION_IDS.has(initLocId);
+  const [locationId, setLocationId] = useState(initIsCustom ? "__custom__" : initLocId);
+  const [customLocation, setCustomLocation] = useState(initIsCustom ? initLocId : "");
+
+  // Derive the location value sent to the server
+  const location = locationId === "__custom__" ? customLocation : locationId;
+
   const [detailedLocation, setDetailedLocation] = useState(initial?.detailedLocation || "");
   const [depth, setDepth] = useState<string>(initial?.depth?.toString() || "");
   const [duration, setDuration] = useState<string>(initial?.duration?.toString() || "");
+
+  // Auto-calculate duration when both dive times are set
+  useEffect(() => {
+    const calc = calcDuration(startTime, endTime);
+    if (calc) setDuration(calc);
+  }, [startTime, endTime]);
   const [visibility, setVisibility] = useState<string>(initial?.visibility?.toString() || "");
 
   const initWeather = initial?.weather || {};
@@ -82,7 +113,15 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
   const [saving, setSaving] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
 
-  const locations = getLocalizedList(DIVING_LOCATIONS, lang);
+  // Group locations by region for the dropdown
+  const regionLabels = Object.fromEntries(
+    LOCATION_REGIONS.map((r) => [r.id, lang === "he" ? r.he : r.en])
+  );
+  const locationsByRegion = LOCATION_REGIONS.map((r) => ({
+    regionId: r.id,
+    label: regionLabels[r.id],
+    items: getLocalizedList(DIVING_LOCATIONS.filter((l) => l.region === r.id), lang),
+  })).filter((g) => g.items.length > 0);
   const weatherItems = getLocalizedList(WEATHER_CONDITIONS, lang);
   const compass = getLocalizedList(COMPASS_DIRECTIONS, lang);
   const masks = getLocalizedList(EQUIPMENT_TYPES.masks, lang);
@@ -210,7 +249,7 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
             {err("date")}
           </div>
           <div>
-            <label className="label">{t("form.time")}</label>
+            <label className="label">{t("form.time")} <span className="text-gray-400 font-normal text-xs">(auto-filled)</span></label>
             <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="input" />
           </div>
           <div>
@@ -222,13 +261,36 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
             <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} className="input" />
           </div>
           <div>
+            <label className="label">{t("form.duration")} {startTime && endTime && calcDuration(startTime, endTime) && <span className="text-ocean-teal font-normal text-xs">(auto)</span>}</label>
+            <input type="number" min="0" value={duration} onChange={(e) => setDuration(e.target.value)} className="input" placeholder="minutes" />
+          </div>
+          <div className="sm:col-span-2">
             <label className="label">{t("form.location")}</label>
-            <select value={location} onChange={(e) => setLocation(e.target.value)} className="input">
-              <option value="">-</option>
-              {locations.map((l) => (
-                <option key={l.id} value={l.id}>{l.label}</option>
+            <select
+              value={locationId}
+              onChange={(e) => { setLocationId(e.target.value); if (e.target.value !== "__custom__") setCustomLocation(""); }}
+              className="input"
+            >
+              <option value="">— {lang === "he" ? "בחר מיקום" : "Select location"} —</option>
+              {locationsByRegion.map((group) => (
+                <optgroup key={group.regionId} label={group.label}>
+                  {group.items.map((l) => (
+                    <option key={l.id} value={l.id}>{l.label}</option>
+                  ))}
+                </optgroup>
               ))}
+              <option value="__custom__">✏️ {lang === "he" ? "מיקום אחר / מותאם אישית" : "Other / Custom location"}</option>
             </select>
+            {locationId === "__custom__" && (
+              <input
+                type="text"
+                value={customLocation}
+                onChange={(e) => setCustomLocation(e.target.value)}
+                className="input mt-2"
+                placeholder={lang === "he" ? "הקלד שם מיקום..." : "Type location name..."}
+                autoFocus
+              />
+            )}
           </div>
           <div>
             <label className="label">{t("form.detailedLocation")}</label>
@@ -238,10 +300,6 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
             <label className="label">{t("form.depth")}</label>
             <input type="number" step="0.5" min="0" max="100" value={depth} onChange={(e) => setDepth(e.target.value)} className="input" />
             {err("depth")}
-          </div>
-          <div>
-            <label className="label">{t("form.duration")}</label>
-            <input type="number" min="0" value={duration} onChange={(e) => setDuration(e.target.value)} className="input" />
           </div>
           <div>
             <label className="label">{t("form.visibility")}</label>
