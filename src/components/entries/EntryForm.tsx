@@ -20,6 +20,10 @@ import {
 } from "@/shared/constants";
 import { validateEntryForm } from "@/shared/validators";
 import { formatDateForInput } from "@/shared/formatters";
+import {
+  Calendar, MapPin, Gauge, Wind, Waves, Wrench,
+  Fish, Camera, StickyNote, Users, Trash2, Plus, X,
+} from "lucide-react";
 
 function nowTime() {
   const now = new Date();
@@ -55,6 +59,90 @@ function emptyCatch() {
   };
 }
 
+/* ── Section header ─────────────────────────────────────────────── */
+function SectionHeader({ icon, title }: { icon: React.ReactNode; title: string }) {
+  return (
+    <div className="flex items-center gap-2.5 mb-4">
+      <div
+        className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-white"
+        style={{ background: "linear-gradient(135deg, var(--color-ocean-deep), var(--color-ocean-teal))" }}
+      >
+        {icon}
+      </div>
+      <h2 className="text-sm font-semibold" style={{ color: "var(--text)" }}>{title}</h2>
+      <div className="flex-1 h-px" style={{ backgroundColor: "var(--card-border)" }} />
+    </div>
+  );
+}
+
+/* ── Chip toggle ────────────────────────────────────────────────── */
+function Chip({
+  label,
+  active,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="px-3 py-1.5 rounded-full border text-xs font-medium transition-all duration-150 active:scale-95"
+      style={
+        active
+          ? {
+              backgroundColor: "var(--color-ocean-teal)",
+              borderColor: "var(--color-ocean-teal)",
+              color: "#fff",
+            }
+          : {
+              backgroundColor: "var(--surface-alt)",
+              borderColor: "var(--card-border)",
+              color: "var(--text-muted)",
+            }
+      }
+    >
+      {label}
+    </button>
+  );
+}
+
+/* ── Range slider with value bubble ────────────────────────────── */
+function RangeField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div>
+      <label className="label">{label}</label>
+      <div className="flex items-center gap-3">
+        <input
+          type="range"
+          min="0"
+          max="10"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="flex-1 accent-ocean-teal"
+        />
+        <span
+          className="w-9 h-7 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0"
+          style={{ backgroundColor: "var(--color-ocean-deep)" }}
+        >
+          {value}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* ── Main form ──────────────────────────────────────────────────── */
 export function EntryForm({ initial, entryId }: EntryFormProps) {
   const router = useRouter();
   const { t, lang } = useLanguage();
@@ -67,24 +155,22 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
   const [startTime, setStartTime] = useState(initial?.startTime || "");
   const [endTime, setEndTime] = useState(initial?.endTime || "");
 
-  // Determine if the saved location is a custom (free-text) value
   const initLocId = initial?.location || "";
   const initIsCustom = !!initLocId && !KNOWN_LOCATION_IDS.has(initLocId);
   const [locationId, setLocationId] = useState(initIsCustom ? "__custom__" : initLocId);
   const [customLocation, setCustomLocation] = useState(initIsCustom ? initLocId : "");
 
-  // Derive the location value sent to the server
   const location = locationId === "__custom__" ? customLocation : locationId;
 
   const [detailedLocation, setDetailedLocation] = useState(initial?.detailedLocation || "");
   const [depth, setDepth] = useState<string>(initial?.depth?.toString() || "");
   const [duration, setDuration] = useState<string>(initial?.duration?.toString() || "");
 
-  // Auto-calculate duration when both dive times are set
   useEffect(() => {
     const calc = calcDuration(startTime, endTime);
     if (calc) setDuration(calc);
   }, [startTime, endTime]);
+
   const [visibility, setVisibility] = useState<string>(initial?.visibility?.toString() || "");
 
   const initWeather = initial?.weather || {};
@@ -114,7 +200,6 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
   const [saving, setSaving] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
 
-  // Group locations by region for the dropdown
   const regionLabels = Object.fromEntries(
     LOCATION_REGIONS.map((r) => [r.id, lang === "he" ? r.he : r.en])
   );
@@ -222,9 +307,7 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
   async function handleDelete() {
     setShowDelete(false);
     const res = await fetch(`/api/entries/${entryId}`, { method: "DELETE" });
-    if (res.ok) {
-      router.push("/entries");
-    }
+    if (res.ok) router.push("/entries");
   }
 
   function err(key: string) {
@@ -234,16 +317,16 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-ocean-deep">
-          {isEdit ? t("form.editTitle") : t("form.addTitle")}
-        </h1>
-      </div>
+    <form onSubmit={handleSubmit} className="space-y-4 animate-fade-in">
+      {/* Page title */}
+      <h1 className="text-xl font-bold tracking-tight" style={{ color: "var(--text)" }}>
+        {isEdit ? t("form.editTitle") : t("form.addTitle")}
+      </h1>
 
-      {/* Section 1: Basic Info */}
+      {/* ── Section 1: Basic Info ─────────────────────────────── */}
       <section className="card space-y-3">
-        <h2 className="section-title">{t("form.section.basic")}</h2>
+        <SectionHeader icon={<Calendar size={14} />} title={t("form.section.basic")} />
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="label">{t("form.date")} *</label>
@@ -251,7 +334,12 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
             {err("date")}
           </div>
           <div>
-            <label className="label">{t("form.time")} <span className="text-gray-400 font-normal text-xs">(auto-filled)</span></label>
+            <label className="label">
+              {t("form.time")}
+              <span className="ms-1.5 text-[10px] font-normal normal-case tracking-normal" style={{ color: "var(--color-ocean-teal)" }}>
+                auto-filled
+              </span>
+            </label>
             <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="input" />
           </div>
           <div>
@@ -259,47 +347,66 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
             <input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} className="input" />
           </div>
           <div>
-            <label className="label">{t("form.endTime")}</label>
+            <label className="label">
+              {t("form.endTime")}
+            </label>
             <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} className="input" />
           </div>
           <div>
-            <label className="label">{t("form.duration")} {startTime && endTime && calcDuration(startTime, endTime) && <span className="text-ocean-teal font-normal text-xs">(auto)</span>}</label>
-            <input type="number" min="0" value={duration} onChange={(e) => setDuration(e.target.value)} className="input" placeholder="minutes" />
-          </div>
-          <div className="sm:col-span-2">
-            <label className="label">{t("form.location")}</label>
-            <select
-              value={locationId}
-              onChange={(e) => { setLocationId(e.target.value); if (e.target.value !== "__custom__") setCustomLocation(""); }}
+            <label className="label">
+              {t("form.duration")}
+              {startTime && endTime && calcDuration(startTime, endTime) && (
+                <span className="ms-1.5 text-[10px] font-normal normal-case tracking-normal" style={{ color: "var(--color-ocean-teal)" }}>auto</span>
+              )}
+            </label>
+            <input
+              type="number"
+              min="0"
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
               className="input"
-            >
-              <option value="">— {lang === "he" ? "בחר מיקום" : "Select location"} —</option>
-              {locationsByRegion.map((group) => (
-                <optgroup key={group.regionId} label={group.label}>
-                  {group.items.map((l) => (
-                    <option key={l.id} value={l.id}>{l.label}</option>
-                  ))}
-                </optgroup>
-              ))}
-              <option value="__custom__">✏️ {lang === "he" ? "מיקום אחר / מותאם אישית" : "Other / Custom location"}</option>
-            </select>
-            {locationId === "__custom__" && (
-              <input
-                type="text"
-                value={customLocation}
-                onChange={(e) => setCustomLocation(e.target.value)}
-                className="input mt-2"
-                placeholder={lang === "he" ? "הקלד שם מיקום..." : "Type location name..."}
-                autoFocus
-              />
-            )}
+              placeholder="min"
+            />
           </div>
+        </div>
+
+        {/* Location */}
+        <div>
+          <label className="label"><MapPin size={10} className="inline me-1" />{t("form.location")}</label>
+          <select
+            value={locationId}
+            onChange={(e) => { setLocationId(e.target.value); if (e.target.value !== "__custom__") setCustomLocation(""); }}
+            className="input"
+          >
+            <option value="">— {lang === "he" ? "בחר מיקום" : "Select location"} —</option>
+            {locationsByRegion.map((group) => (
+              <optgroup key={group.regionId} label={group.label}>
+                {group.items.map((l) => (
+                  <option key={l.id} value={l.id}>{l.label}</option>
+                ))}
+              </optgroup>
+            ))}
+            <option value="__custom__">✏️ {lang === "he" ? "מיקום אחר / מותאם אישית" : "Other / Custom location"}</option>
+          </select>
+          {locationId === "__custom__" && (
+            <input
+              type="text"
+              value={customLocation}
+              onChange={(e) => setCustomLocation(e.target.value)}
+              className="input mt-2"
+              placeholder={lang === "he" ? "הקלד שם מיקום..." : "Type location name..."}
+              autoFocus
+            />
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="label">{t("form.detailedLocation")}</label>
             <input type="text" value={detailedLocation} onChange={(e) => setDetailedLocation(e.target.value)} className="input" />
           </div>
           <div>
-            <label className="label">{t("form.depth")}</label>
+            <label className="label"><Gauge size={10} className="inline me-1" />{t("form.depth")}</label>
             <input type="number" step="0.5" min="0" max="100" value={depth} onChange={(e) => setDepth(e.target.value)} className="input" />
             {err("depth")}
           </div>
@@ -311,26 +418,24 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
         </div>
       </section>
 
-      {/* Section 2: Weather */}
+      {/* ── Section 2: Weather ───────────────────────────────── */}
       <section className="card space-y-3">
-        <h2 className="section-title">{t("form.section.weather")}</h2>
+        <SectionHeader icon={<Wind size={14} />} title={t("form.section.weather")} />
+
         <div>
           <label className="label">{t("form.weather.conditions")}</label>
           <div className="flex flex-wrap gap-2">
             {weatherItems.map((w) => (
-              <button
+              <Chip
                 key={w.id}
-                type="button"
+                label={w.label}
+                active={conditions.includes(w.id)}
                 onClick={() => toggleCondition(w.id)}
-                className={`px-3 py-1 rounded-full border text-sm ${
-                  conditions.includes(w.id) ? "bg-ocean-teal text-white border-ocean-teal" : "bg-white border-gray-300"
-                }`}
-              >
-                {w.label}
-              </button>
+              />
             ))}
           </div>
         </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="label">{t("form.weather.airTemp")}</label>
@@ -349,11 +454,7 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
               {compass.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
             </select>
           </div>
-          <div>
-            <label className="label">{t("form.weather.windIntensity")}</label>
-            <input type="range" min="0" max="10" value={windIntensity} onChange={(e) => setWindIntensity(e.target.value)} className="w-full" />
-            <span className="text-sm">{windIntensity}/10</span>
-          </div>
+          <RangeField label={t("form.weather.windIntensity")} value={windIntensity} onChange={setWindIntensity} />
           <div>
             <label className="label">{t("form.weather.currentDirection")}</label>
             <select value={currentDirection} onChange={(e) => setCurrentDirection(e.target.value)} className="input">
@@ -361,17 +462,13 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
               {compass.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
             </select>
           </div>
-          <div>
-            <label className="label">{t("form.weather.currentIntensity")}</label>
-            <input type="range" min="0" max="10" value={currentIntensity} onChange={(e) => setCurrentIntensity(e.target.value)} className="w-full" />
-            <span className="text-sm">{currentIntensity}/10</span>
-          </div>
+          <RangeField label={t("form.weather.currentIntensity")} value={currentIntensity} onChange={setCurrentIntensity} />
         </div>
       </section>
 
-      {/* Section 3: Equipment */}
+      {/* ── Section 3: Equipment ─────────────────────────────── */}
       <section className="card space-y-3">
-        <h2 className="section-title">{t("form.section.equipment")}</h2>
+        <SectionHeader icon={<Wrench size={14} />} title={t("form.section.equipment")} />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="label">{t("form.equipment.mask")}</label>
@@ -405,36 +502,54 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
         </div>
       </section>
 
-      {/* Fishing types */}
+      {/* ── Fishing types ────────────────────────────────────── */}
       <section className="card space-y-3">
-        <h2 className="section-title">{t("detail.fishingTypes")}</h2>
+        <SectionHeader icon={<Waves size={14} />} title={t("detail.fishingTypes")} />
         <div className="flex flex-wrap gap-2">
           {methods.map((m) => (
-            <button
+            <Chip
               key={m.id}
-              type="button"
+              label={m.label}
+              active={fishingTypes.includes(m.id)}
               onClick={() => toggleFishingType(m.id)}
-              className={`px-3 py-1 rounded-full border text-sm ${
-                fishingTypes.includes(m.id) ? "bg-ocean-teal text-white border-ocean-teal" : "bg-white border-gray-300"
-              }`}
-            >
-              {m.label}
-            </button>
+            />
           ))}
         </div>
       </section>
 
-      {/* Section 4: Catches */}
+      {/* ── Section 4: Catches ───────────────────────────────── */}
       <section className="card space-y-3">
-        <h2 className="section-title">{t("form.section.catches")}</h2>
+        <SectionHeader icon={<Fish size={14} />} title={t("form.section.catches")} />
+
         {catches.map((c, i) => (
-          <div key={c.id} className="border border-gray-200 rounded-lg p-3 space-y-2">
+          <div
+            key={c.id}
+            className="rounded-xl border p-3 space-y-2.5"
+            style={{ borderColor: "var(--card-border)", backgroundColor: "var(--surface-alt)" }}
+          >
+            {/* Catch header */}
             <div className="flex justify-between items-center">
-              <span className="font-medium">#{i + 1}</span>
-              <button type="button" onClick={() => removeCatch(i)} className="text-coral text-sm">
-                {t("form.catch.remove")}
+              <div className="flex items-center gap-2">
+                <span
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                  style={{ background: "linear-gradient(135deg, var(--color-ocean-deep), var(--color-ocean-teal))" }}
+                >
+                  {i + 1}
+                </span>
+                <span className="text-sm font-medium" style={{ color: "var(--text)" }}>
+                  {c.species ? species.find((s) => s.id === c.species)?.label || c.species : t("form.catch.species")}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => removeCatch(i)}
+                className="w-6 h-6 rounded-full flex items-center justify-center transition-colors hover:bg-coral/15"
+                style={{ color: "var(--color-coral)" }}
+              >
+                <X size={14} />
               </button>
             </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div>
                 <label className="label">{t("form.catch.species")} *</label>
@@ -442,7 +557,7 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
                   <option value="">-</option>
                   {species.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
                 </select>
-                {errors[`catch_${i}_species`] && <p className="text-coral text-xs">{t(errors[`catch_${i}_species`])}</p>}
+                {errors[`catch_${i}_species`] && <p className="text-coral text-xs mt-1">{t(errors[`catch_${i}_species`])}</p>}
               </div>
               <div>
                 <label className="label">{t("form.catch.method")}</label>
@@ -451,25 +566,28 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
                 </select>
               </div>
               <div>
-                <label className="label">{t("form.catch.weight")}</label>
+                <label className="label">{t("form.catch.weight")} (g)</label>
                 <input type="number" value={c.weight || ""} onChange={(e) => updateCatch(i, "weight", e.target.value)} className="input" />
               </div>
               <div>
-                <label className="label">{t("form.catch.length")}</label>
+                <label className="label">{t("form.catch.length")} (cm)</label>
                 <input type="number" value={c.length || ""} onChange={(e) => updateCatch(i, "length", e.target.value)} className="input" />
               </div>
               <div>
                 <label className="label">{t("form.catch.quantity")}</label>
                 <input type="number" min="1" value={c.quantity} onChange={(e) => updateCatch(i, "quantity", e.target.value)} className="input" />
               </div>
-              <div className="flex items-center gap-2 pt-6">
+              <div className="flex items-center gap-2.5 pt-5">
                 <input
                   type="checkbox"
                   id={`released-${i}`}
                   checked={c.released}
                   onChange={(e) => updateCatch(i, "released", e.target.checked)}
+                  className="w-4 h-4 accent-ocean-teal rounded"
                 />
-                <label htmlFor={`released-${i}`}>{t("form.catch.released")}</label>
+                <label htmlFor={`released-${i}`} className="text-sm" style={{ color: "var(--text)" }}>
+                  {t("form.catch.released")}
+                </label>
               </div>
               <div className="sm:col-span-2">
                 <label className="label">{t("form.catch.notes")}</label>
@@ -478,22 +596,29 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
             </div>
           </div>
         ))}
-        <button type="button" onClick={() => setCatches([...catches, emptyCatch()])} className="btn btn-secondary">
-          + {t("form.catch.add")}
+
+        {/* Add catch button — dashed */}
+        <button
+          type="button"
+          onClick={() => setCatches([...catches, emptyCatch()])}
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed text-sm font-medium transition-all duration-150 hover:opacity-80 active:scale-98"
+          style={{ borderColor: "var(--color-ocean-teal)", color: "var(--color-ocean-teal)" }}
+        >
+          <Plus size={15} />
+          {t("form.catch.add")}
         </button>
       </section>
 
-      {/* Section 5: Photos */}
+      {/* ── Section 5: Photos ────────────────────────────────── */}
       <section className="card space-y-3">
-        <h2 className="section-title">{t("form.section.photos")}</h2>
+        <SectionHeader icon={<Camera size={14} />} title={t("form.section.photos")} />
         <PhotoUpload photos={photos} onChange={setPhotos} />
       </section>
 
-      {/* Section: Group Outing */}
+      {/* ── Group outing ─────────────────────────────────────── */}
       <section className="card space-y-3">
-        <h2 className="section-title">{t("buddy.groupId")}</h2>
+        <SectionHeader icon={<Users size={14} />} title={t("buddy.groupId")} />
         <div>
-          <label className="label">{t("buddy.groupId")}</label>
           <div className="flex gap-2">
             <input
               type="text"
@@ -505,18 +630,18 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
             <button
               type="button"
               onClick={() => setGroupId(uuidv4())}
-              className="btn btn-secondary text-sm whitespace-nowrap"
+              className="btn btn-secondary whitespace-nowrap"
             >
               {t("buddy.startGroup")}
             </button>
           </div>
-          <p className="text-xs text-gray-500 mt-1">{t("buddy.groupHint")}</p>
+          <p className="text-xs mt-1.5" style={{ color: "var(--text-muted)" }}>{t("buddy.groupHint")}</p>
         </div>
       </section>
 
-      {/* Section 6: Notes & Rating */}
-      <section className="card space-y-3">
-        <h2 className="section-title">{t("form.section.notes")}</h2>
+      {/* ── Section 6: Notes & Rating ────────────────────────── */}
+      <section className="card space-y-4">
+        <SectionHeader icon={<StickyNote size={14} />} title={t("form.section.notes")} />
         <div>
           <label className="label">{t("form.notes")}</label>
           <textarea
@@ -524,10 +649,14 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
             onChange={(e) => setNotes(e.target.value)}
             maxLength={MAX_NOTES_LENGTH}
             rows={4}
-            className="input"
+            className="input resize-none"
           />
-          <p className="text-xs text-gray-500 mt-1">{t("form.notes.counter", { count: notes.length, max: MAX_NOTES_LENGTH })}</p>
-          {err("notes")}
+          <div className="flex justify-between mt-1">
+            {err("notes")}
+            <p className="text-xs ms-auto tabular-nums" style={{ color: "var(--text-muted)" }}>
+              {notes.length} / {MAX_NOTES_LENGTH}
+            </p>
+          </div>
         </div>
         <div>
           <label className="label">{t("form.rating")} *</label>
@@ -536,17 +665,24 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
         </div>
       </section>
 
-      <div className="flex gap-2 justify-end flex-wrap">
+      {/* ── Actions ──────────────────────────────────────────── */}
+      <div className="flex gap-2 justify-end flex-wrap pb-2">
         {isEdit && (
-          <button type="button" onClick={() => setShowDelete(true)} className="btn btn-danger">
+          <button type="button" onClick={() => setShowDelete(true)} className="btn btn-danger gap-1.5">
+            <Trash2 size={14} />
             {t("form.delete")}
           </button>
         )}
         <button type="button" onClick={() => router.back()} className="btn btn-secondary">
           {t("form.cancel")}
         </button>
-        <button type="submit" disabled={saving} className="btn btn-primary">
-          {saving ? t("form.saving") : t("form.save")}
+        <button type="submit" disabled={saving} className="btn btn-primary min-w-[90px]">
+          {saving ? (
+            <span className="flex items-center gap-2">
+              <span className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+              {t("form.saving")}
+            </span>
+          ) : t("form.save")}
         </button>
       </div>
 
