@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useLanguage } from '@/i18n/LanguageProvider'
-import { StatCard } from '@/components/stats/StatCard'
 
 type RankItem = { name: string; [key: string]: any }
 

@@ -21,7 +21,7 @@ interface Props {
   lang: string
 }
 
-export default function TimeSeriesCharts({ entries, lang }: Props) {
+export default function TimeSeriesCharts({ entries }: Props) {
   // Dives per month
   const divesPerMonth: Record<string, number> = {}
   entries.forEach(e => {

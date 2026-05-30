@@ -20,7 +20,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         />
       </head>
       <body className="antialiased">
-        <Providers>{children}</Providers>
+        <Providers>
+          <ServiceWorkerRegistrar />
+          {children}
+        </Providers>
       </body>
     </html>
   );
