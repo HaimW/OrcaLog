@@ -12,6 +12,8 @@ import TimeSeriesChartsWrapper from "@/components/stats/TimeSeriesChartsWrapper"
 import PersonalRecordsCard from "@/components/stats/PersonalRecords";
 import { computePersonalRecords } from "@/shared/stats-calculator";
 import Link from "next/link";
+import { SkeletonStatCard } from "@/components/ui/Skeleton";
+import { Map, Waves } from "lucide-react";
 
 export default function StatsPage() {
   const { t, lang } = useLanguage();
@@ -38,7 +40,19 @@ export default function StatsPage() {
       .catch(() => setLoading(false));
   }, [selectedUser, isAdmin]);
 
-  if (loading) return <p className="text-center py-12">...</p>;
+  if (loading) {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <div className="h-7 w-32 skeleton rounded-full" />
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {[0, 1, 2, 3].map((i) => <SkeletonStatCard key={i} />)}
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {[0, 1, 2, 3].map((i) => <SkeletonStatCard key={i} />)}
+        </div>
+      </div>
+    );
+  }
 
   const stats = computeStats(entries);
 
@@ -52,14 +66,14 @@ export default function StatsPage() {
   }));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <h1 className="text-2xl font-bold text-ocean-deep">{t("stats.title")}</h1>
+        <h1 className="text-xl font-bold tracking-tight" style={{ color: "var(--text)" }}>{t("stats.title")}</h1>
         {isAdmin && users.length > 0 && (
           <select
             value={selectedUser}
             onChange={(e) => setSelectedUser(e.target.value)}
-            className="input w-auto"
+            className="input w-auto text-sm"
           >
             <option value="">{t("filter.allUsers")}</option>
             {users.map((u) => (
@@ -70,27 +84,39 @@ export default function StatsPage() {
       </div>
 
       {!entries.length ? (
-        <p className="text-center text-gray-500 py-12">{t("stats.noData")}</p>
+        <div className="flex flex-col items-center justify-center py-20 gap-4">
+          <div
+            className="w-20 h-20 rounded-3xl flex items-center justify-center"
+            style={{ background: "linear-gradient(135deg, var(--color-ocean-deep), var(--color-ocean-teal))" }}
+          >
+            <Waves size={36} className="text-white" />
+          </div>
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>{t("stats.noData")}</p>
+        </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {/* Primary stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 stagger-children">
             <StatCard label={t("stats.totalDives")} value={stats.totalDives} icon="🤿" />
             <StatCard label={t("stats.totalFish")} value={stats.totalFishCaught} icon="🐟" />
             <StatCard label={t("stats.totalHours")} value={formatNumber(stats.totalHoursInWater, lang)} icon="⏱" />
             <StatCard label={t("stats.recentActivity")} value={stats.recentActivity} icon="📅" />
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {/* Secondary stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 stagger-children">
             <StatCard label={t("stats.avgRating")} value={formatNumber(stats.averageRating, lang)} icon="⭐" />
             <StatCard label={t("stats.avgDepth")} value={formatNumber(stats.averageDepth, lang)} unit="m" icon="🌊" />
             <StatCard label={t("stats.maxDepth")} value={formatNumber(stats.maxDepth, lang)} unit="m" icon="↕" />
             <StatCard label={t("stats.avgVisibility")} value={formatNumber(stats.averageVisibility, lang)} unit="m" icon="👁" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {/* Tertiary */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <StatCard label={t("stats.avgWaterTemp")} value={formatNumber(stats.averageWaterTemperature, lang)} unit="°C" icon="🌡" />
           </div>
 
+          {/* Charts */}
           {topSpeciesItems.length > 0 && (
             <BarChart title={t("stats.topSpecies")} items={topSpeciesItems} />
           )}
@@ -107,26 +133,34 @@ export default function StatsPage() {
             <TimeSeriesChartsWrapper entries={entries} lang={lang} />
           )}
 
-          <div className="flex items-center gap-3">
+          {/* Map toggle */}
+          <div>
             <button
               onClick={() => setShowMap(!showMap)}
-              className="text-ocean-teal text-sm underline"
+              className={`btn text-sm gap-2 ${showMap ? "btn-primary" : "btn-secondary"}`}
             >
+              <Map size={15} />
               {showMap ? t("map.hideMap") : t("map.showMap")}
             </button>
           </div>
 
           {showMap && (
-            <div className="h-64 sm:h-96 rounded-lg overflow-hidden">
+            <div className="h-64 sm:h-96 rounded-2xl overflow-hidden border animate-fade-in" style={{ borderColor: "var(--card-border)" }}>
               <DiveMapWrapper entries={entries} />
             </div>
           )}
 
+          {/* Fishing analytics link */}
           <Link
             href="/stats/fishing"
-            className="card block hover:shadow-md transition-shadow text-center"
+            className="card block transition-all duration-200 text-center group"
+            style={{ boxShadow: "var(--shadow-card)" }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.boxShadow = "var(--shadow-hover)"; (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-2px)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.boxShadow = "var(--shadow-card)"; (e.currentTarget as HTMLAnchorElement).style.transform = ""; }}
           >
-            <p className="text-lg font-bold text-ocean-deep">🎣 {t("stats.fishing.title")} →</p>
+            <p className="font-semibold" style={{ color: "var(--color-ocean-deep)" }}>
+              🎣 {t("stats.fishing.title")} →
+            </p>
           </Link>
         </>
       )}
