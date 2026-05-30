@@ -5,7 +5,7 @@ import { useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { useLanguage } from "@/i18n/LanguageProvider";
 import { useTheme, THEMES } from "@/i18n/ThemeProvider";
-import { Palette, Languages, LogOut, ChevronDown, Check } from "lucide-react";
+import { Palette, Languages, LogOut, Check } from "lucide-react";
 
 function WaveIcon({ size = 20 }: { size?: number }) {
   return (
