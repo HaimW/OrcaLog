@@ -27,11 +27,24 @@ export default function EntryDetailPage() {
   const [lightbox, setLightbox] = useState<string | null>(null);
   const [showDelete, setShowDelete] = useState(false);
   const [whatsappLink, setWhatsappLink] = useState("");
+  const [shareCopied, setShareCopied] = useState(false);
+  const [groupEntries, setGroupEntries] = useState<any[]>([]);
 
   useEffect(() => {
     fetch(`/api/entries/${params.id}`)
       .then((r) => (r.ok ? r.json() : null))
-      .then((data) => { setEntry(data); setLoading(false); });
+      .then((data) => {
+        setEntry(data);
+        setLoading(false);
+        if (data?.groupId) {
+          fetch(`/api/entries/group/${data.groupId}`)
+            .then(r => r.ok ? r.json() : [])
+            .then((groupData: any[]) => {
+              setGroupEntries(groupData.filter((e: any) => e.id !== data.id));
+            })
+            .catch(() => {});
+        }
+      });
     fetch("/api/config")
       .then((r) => r.ok ? r.json() : { whatsappGroupLink: "" })
       .then((c: any) => setWhatsappLink(c.whatsappGroupLink || ""));
@@ -46,6 +59,27 @@ export default function EntryDetailPage() {
   function handleShare() {
     const shared = shareViaWhatsApp(entry, lang, whatsappLink || undefined);
     if (!shared) copyShareMessage(entry, lang).then(() => alert(t("share.copied")));
+  }
+
+  async function handleCopyShareLink() {
+    const res = await fetch(`/api/entries/${params.id}/share`, { method: "POST" });
+    if (res.ok) {
+      const data = await res.json();
+      const fullUrl = window.location.origin + data.url;
+      try {
+        await navigator.clipboard.writeText(fullUrl);
+      } catch {
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = fullUrl;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 3000);
+    }
   }
 
   if (loading) return <p className="text-center py-12">...</p>;
@@ -71,9 +105,15 @@ export default function EntryDetailPage() {
         <button onClick={() => router.back()} className="text-ocean-teal flex items-center gap-1">
           ← {t("detail.back")}
         </button>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <button onClick={handleShare} className="btn btn-secondary text-sm">
             💬 {t("detail.share")}
+          </button>
+          <button
+            onClick={handleCopyShareLink}
+            className={`btn text-sm ${shareCopied ? "btn-primary" : "btn-secondary"}`}
+          >
+            🔗 {shareCopied ? t("share.linkCopied") : t("share.copyLink")}
           </button>
           <Link href={`/entries/${entry.id}/edit`} className="btn btn-primary text-sm">
             {t("detail.edit")}
@@ -226,6 +266,32 @@ export default function EntryDetailPage() {
         <div className="card">
           <h2 className="section-title">{t("detail.detailedLocation")}</h2>
           <p className="text-sm">{entry.detailedLocation}</p>
+        </div>
+      )}
+
+      {/* Group Outing */}
+      {entry.groupId && (
+        <div className="card">
+          <h2 className="section-title">{t("buddy.groupDives")}</h2>
+          {groupEntries.length === 0 ? (
+            <p className="text-sm text-gray-500">{t("buddy.noGroup")}</p>
+          ) : (
+            <div className="space-y-2">
+              {groupEntries.map((ge: any) => (
+                <Link
+                  key={ge.id}
+                  href={`/entries/${ge.id}`}
+                  className="block border border-gray-200 rounded-lg p-3 hover:bg-gray-50"
+                >
+                  <div className="flex justify-between items-center">
+                    <p className="font-medium text-sm">{ge.location || t("detail.location")}</p>
+                    <p className="text-xs text-gray-500">{ge.date ? new Date(ge.date).toLocaleDateString() : ""}</p>
+                  </div>
+                  {ge.depth && <p className="text-xs text-gray-500">{ge.depth}m</p>}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

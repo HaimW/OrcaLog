@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
+import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar";
 
 export const metadata: Metadata = {
   title: "OrcaLog",
@@ -19,7 +20,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         />
       </head>
       <body className="antialiased">
-        <Providers>{children}</Providers>
+        <Providers>
+          <ServiceWorkerRegistrar />
+          {children}
+        </Providers>
       </body>
     </html>
   );

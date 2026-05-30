@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { useLanguage } from "@/i18n/LanguageProvider";
 import { EntryCard } from "@/components/entries/EntryCard";
 import { FilterBar, Filters } from "@/components/entries/FilterBar";
+import DiveMapWrapper from "@/components/map/DiveMapWrapper";
 
 export default function EntriesPage() {
   const { t } = useLanguage();
@@ -17,6 +18,7 @@ export default function EntriesPage() {
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState<Filters>({});
   const [showFilters, setShowFilters] = useState(false);
+  const [showMap, setShowMap] = useState(false);
   const [users, setUsers] = useState<any[]>([]);
 
   useEffect(() => {
@@ -113,7 +115,21 @@ export default function EntriesPage() {
         <FilterBar filters={filters} onChange={setFilters} users={users} showUserFilter={isAdmin} />
       )}
 
-      <p className="text-sm text-gray-600">{t("list.totalCount", { count: totalCount })}</p>
+      <div className="flex items-center gap-3">
+        <p className="text-sm text-gray-600">{t("list.totalCount", { count: totalCount })}</p>
+        <button
+          onClick={() => setShowMap(!showMap)}
+          className="text-ocean-teal text-sm underline"
+        >
+          {showMap ? t("map.hideMap") : t("map.showMap")}
+        </button>
+      </div>
+
+      {showMap && (
+        <div className="h-64 sm:h-96 rounded-lg overflow-hidden mb-4">
+          <DiveMapWrapper entries={entries} />
+        </div>
+      )}
 
       {loading ? (
         <p className="text-center py-8">...</p>

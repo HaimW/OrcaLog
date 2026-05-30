@@ -108,6 +108,7 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
   const [photos, setPhotos] = useState<string[]>(initial?.photos || []);
   const [notes, setNotes] = useState(initial?.notes || "");
   const [rating, setRating] = useState<number>(initial?.rating || 0);
+  const [groupId, setGroupId] = useState<string>(initial?.groupId || "");
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
@@ -185,6 +186,7 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
       photos,
       notes: notes || null,
       rating,
+      groupId: groupId || null,
     };
   }
 
@@ -485,6 +487,31 @@ export function EntryForm({ initial, entryId }: EntryFormProps) {
       <section className="card space-y-3">
         <h2 className="section-title">{t("form.section.photos")}</h2>
         <PhotoUpload photos={photos} onChange={setPhotos} />
+      </section>
+
+      {/* Section: Group Outing */}
+      <section className="card space-y-3">
+        <h2 className="section-title">{t("buddy.groupId")}</h2>
+        <div>
+          <label className="label">{t("buddy.groupId")}</label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={groupId}
+              onChange={(e) => setGroupId(e.target.value)}
+              className="input flex-1"
+              placeholder={lang === "he" ? "מזהה קבוצה (אופציונלי)" : "Group ID (optional)"}
+            />
+            <button
+              type="button"
+              onClick={() => setGroupId(uuidv4())}
+              className="btn btn-secondary text-sm whitespace-nowrap"
+            >
+              {t("buddy.startGroup")}
+            </button>
+          </div>
+          <p className="text-xs text-gray-500 mt-1">{t("buddy.groupHint")}</p>
+        </div>
       </section>
 
       {/* Section 6: Notes & Rating */}

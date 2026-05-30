@@ -7,6 +7,11 @@ import { StatCard } from "@/components/stats/StatCard";
 import { BarChart } from "@/components/stats/BarChart";
 import { computeStats } from "@/shared/stats-calculator";
 import { formatSpecies, formatMethod, formatNumber } from "@/shared/formatters";
+import DiveMapWrapper from "@/components/map/DiveMapWrapper";
+import TimeSeriesChartsWrapper from "@/components/stats/TimeSeriesChartsWrapper";
+import PersonalRecordsCard from "@/components/stats/PersonalRecords";
+import { computePersonalRecords } from "@/shared/stats-calculator";
+import Link from "next/link";
 
 export default function StatsPage() {
   const { t, lang } = useLanguage();
@@ -16,6 +21,7 @@ export default function StatsPage() {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<any[]>([]);
   const [selectedUser, setSelectedUser] = useState("");
+  const [showMap, setShowMap] = useState(false);
 
   useEffect(() => {
     if (isAdmin) {
@@ -92,6 +98,36 @@ export default function StatsPage() {
           {methodItems.length > 0 && (
             <BarChart title={t("stats.methodBreakdown")} items={methodItems} />
           )}
+
+          {entries.length > 0 && (
+            <PersonalRecordsCard records={computePersonalRecords(entries)} t={t} />
+          )}
+
+          {entries.length >= 2 && (
+            <TimeSeriesChartsWrapper entries={entries} lang={lang} />
+          )}
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowMap(!showMap)}
+              className="text-ocean-teal text-sm underline"
+            >
+              {showMap ? t("map.hideMap") : t("map.showMap")}
+            </button>
+          </div>
+
+          {showMap && (
+            <div className="h-64 sm:h-96 rounded-lg overflow-hidden">
+              <DiveMapWrapper entries={entries} />
+            </div>
+          )}
+
+          <Link
+            href="/stats/fishing"
+            className="card block hover:shadow-md transition-shadow text-center"
+          >
+            <p className="text-lg font-bold text-ocean-deep">🎣 {t("stats.fishing.title")} →</p>
+          </Link>
         </>
       )}
     </div>

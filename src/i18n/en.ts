@@ -27,6 +27,7 @@ export const en: Record<string, string> = {
   "nav.stats": "Stats",
   "nav.admin": "Admin",
   "nav.langToggle": "HE",
+  "nav.leaderboard": "Leaderboard",
 
   // List View
   "list.title": "My Dive Log",
@@ -182,6 +183,29 @@ export const en: Record<string, string> = {
   "stats.noData": "No data yet",
   "stats.userFilter": "Filter by User",
 
+  // Buddy System
+  "buddy.groupId": "Group Outing ID",
+  "buddy.startGroup": "Generate Group ID",
+  "buddy.groupDives": "Group Outing Dives",
+  "buddy.noGroup": "No group outing",
+  "buddy.groupHint": "Share this ID with buddies to link your dives",
+
+  // Profile
+  "profile.title": "My Profile",
+  "profile.showInLeaderboard": "Show me in leaderboard",
+  "profile.emailNotifications": "Email notifications",
+  "profile.save": "Save",
+  "profile.saved": "Saved!",
+
+  // Leaderboard
+  "leaderboard.title": "Leaderboard",
+  "leaderboard.disabled": "Leaderboard is currently disabled",
+  "leaderboard.mostDives": "Most Dives This Month",
+  "leaderboard.heaviestCatch": "Heaviest Catch",
+  "leaderboard.mostSpecies": "Most Species",
+  "leaderboard.deepestDive": "Deepest Dive",
+  "leaderboard.optIn": "Show me in leaderboard",
+
   // Admin View
   "admin.title": "Admin Panel",
   "admin.shortcuts": "Shortcuts",
@@ -193,6 +217,7 @@ export const en: Record<string, string> = {
   "admin.configSaved": "Settings saved!",
   "admin.userFilter": "Filter by User",
   "admin.allUsers": "All Users",
+  "admin.leaderboardEnabled": "Enable Leaderboard",
 
   // Import / Export
   "io.export": "Export JSON",
@@ -213,6 +238,11 @@ export const en: Record<string, string> = {
   "share.notes": "📝 {notes}",
   "share.copied": "Copied to clipboard!",
   "share.error": "Error sharing",
+
+  // Share link
+  "share.copyLink": "Copy Share Link",
+  "share.linkCopied": "Link Copied!",
+  "share.viewEntry": "View Dive Entry",
 
   // Confirm Modal
   "confirm.deleteEntry": "Delete this entry?",
@@ -237,6 +267,36 @@ export const en: Record<string, string> = {
   "error.generic": "An error occurred. Please try again.",
   "error.notFound": "Entry not found",
   "error.unauthorized": "Not authorized to perform this action",
+
+  // Stats Charts
+  "stats.divesPerMonth": "Dives per Month",
+  "stats.depthOverTime": "Depth Over Time",
+
+  // Fishing Stats
+  "stats.fishing.title": "Fishing Stats",
+  "stats.fishing.speciesPerSeason": "Species per Season",
+  "stats.fishing.avgWeight": "Average Weight per Species",
+  "stats.fishing.releaseRate": "Release Rate",
+  "stats.fishing.topLocations": "Top Locations per Species",
+
+  // Personal Records
+  "stats.records.title": "Personal Records",
+  "stats.records.deepest": "Deepest Dive",
+  "stats.records.biggest": "Biggest Catch",
+  "stats.records.streak": "Longest Streak",
+  "stats.records.mostProductive": "Most Productive Dive",
+  "stats.records.days": "days",
+
+  // Seasons
+  "season.spring": "Spring",
+  "season.summer": "Summer",
+  "season.fall": "Fall",
+  "season.winter": "Winter",
+
+  // Map
+  "map.showMap": "Show Map",
+  "map.hideMap": "Hide Map",
+  "map.noCoords": "No coordinates recorded",
 
   // Units
   "unit.meters": "m",

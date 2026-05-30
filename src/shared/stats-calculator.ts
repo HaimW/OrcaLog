@@ -1,3 +1,87 @@
+export interface PersonalRecords {
+  deepestDive: { depth: number; entryId: string; date: string } | null
+  biggestCatch: { species: string; weight: number; entryId: string } | null
+  longestStreak: number
+  mostProductiveDive: { catches: number; entryId: string; date: string } | null
+}
+
+export function computePersonalRecords(entries: any[]): PersonalRecords {
+  if (!entries || entries.length === 0) {
+    return { deepestDive: null, biggestCatch: null, longestStreak: 0, mostProductiveDive: null }
+  }
+
+  // Deepest dive
+  let deepestDive: PersonalRecords['deepestDive'] = null
+  entries.forEach(e => {
+    if (e.depth != null && (deepestDive === null || e.depth > deepestDive.depth)) {
+      deepestDive = {
+        depth: e.depth,
+        entryId: e.id,
+        date: typeof e.date === 'string' ? e.date.slice(0, 10) : new Date(e.date).toISOString().slice(0, 10),
+      }
+    }
+  })
+
+  // Biggest catch
+  let biggestCatch: PersonalRecords['biggestCatch'] = null
+  entries.forEach(e => {
+    const catches = Array.isArray(e.catches) ? e.catches : []
+    catches.forEach((c: any) => {
+      if (!c.weight) return
+      const w = parseFloat(c.weight)
+      if (isNaN(w)) return
+      if (biggestCatch === null || w > biggestCatch.weight) {
+        biggestCatch = { species: c.species, weight: w, entryId: e.id }
+      }
+    })
+  })
+
+  // Longest streak (consecutive calendar days)
+  const dateStrings = Array.from(
+    new Set(
+      entries.map(e => {
+        if (!e.date) return null
+        return typeof e.date === 'string' ? e.date.slice(0, 10) : new Date(e.date).toISOString().slice(0, 10)
+      }).filter(Boolean) as string[]
+    )
+  ).sort()
+
+  let longestStreak = 0
+  let currentStreak = 0
+  for (let i = 0; i < dateStrings.length; i++) {
+    if (i === 0) {
+      currentStreak = 1
+    } else {
+      const prev = new Date(dateStrings[i - 1])
+      const curr = new Date(dateStrings[i])
+      const diffMs = curr.getTime() - prev.getTime()
+      const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24))
+      if (diffDays === 1) {
+        currentStreak++
+      } else {
+        currentStreak = 1
+      }
+    }
+    if (currentStreak > longestStreak) longestStreak = currentStreak
+  }
+
+  // Most productive dive (most fish caught)
+  let mostProductiveDive: PersonalRecords['mostProductiveDive'] = null
+  entries.forEach(e => {
+    const catches = Array.isArray(e.catches) ? e.catches : []
+    const count = catches.reduce((sum: number, c: any) => sum + (c.quantity || 1), 0)
+    if (count > 0 && (mostProductiveDive === null || count > mostProductiveDive.catches)) {
+      mostProductiveDive = {
+        catches: count,
+        entryId: e.id,
+        date: typeof e.date === 'string' ? e.date.slice(0, 10) : new Date(e.date).toISOString().slice(0, 10),
+      }
+    }
+  })
+
+  return { deepestDive, biggestCatch, longestStreak, mostProductiveDive }
+}
+
 export interface DiveStats {
   totalDives: number;
   totalFishCaught: number;
