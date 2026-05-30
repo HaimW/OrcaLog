@@ -15,6 +15,7 @@ export function BottomNav() {
     { href: "/entries", label: t("nav.entries"), icon: "📋" },
     { href: "/entries/new", label: t("nav.add"), icon: "➕" },
     { href: "/stats", label: t("nav.stats"), icon: "📊" },
+    { href: "/leaderboard", label: t("nav.leaderboard"), icon: "🏆" },
   ];
   if (isAdmin) {
     items.push({ href: "/admin", label: t("nav.admin"), icon: "⚙️" });

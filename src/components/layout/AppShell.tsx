@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { Header } from "./Header";
 import { BottomNav } from "./BottomNav";
 import { useLanguage } from "@/i18n/LanguageProvider";
+import OfflineIndicator from "./OfflineIndicator";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
@@ -30,6 +31,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen pb-20">
       <Header />
       <main className="max-w-6xl mx-auto px-4 py-6">{children}</main>
+      <OfflineIndicator />
       <BottomNav />
     </div>
   );

@@ -18,10 +18,12 @@ model User {
   language        String      @default("he")
   units           String      @default("metric")
   theme           String      @default("light")
-  defaultLocation String?
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  entries         DiveEntry[]
+  defaultLocation     String?
+  showInLeaderboard   Boolean @default(false)
+  emailNotifications  Boolean @default(true)
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+  entries             DiveEntry[]
 }
 
 model DiveEntry {
@@ -46,16 +48,20 @@ model DiveEntry {
   photos           String?
   notes            String?
   rating           Int
+  shareToken       String?  @unique
+  groupId          String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
   @@index([userId])
   @@index([date])
   @@index([location])
+  @@index([groupId])
 }
 
 model AppConfig {
-  id                String  @id @default("singleton")
-  adminEmails       String  @default("[]")
-  whatsappGroupLink String?
+  id                 String  @id @default("singleton")
+  adminEmails        String  @default("[]")
+  whatsappGroupLink  String?
+  leaderboardEnabled Boolean @default(false)
 }

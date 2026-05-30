@@ -1,0 +1,13 @@
+{
+  "name": "OrcaLog",
+  "short_name": "OrcaLog",
+  "description": "Diving & Spearfishing Logbook",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B4F6C",
+  "theme_color": "#0B4F6C",
+  "lang": "he",
+  "icons": [
+    { "src": "/favicon.ico", "sizes": "any", "type": "image/x-icon" }
+  ]
+}

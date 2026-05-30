@@ -9,11 +9,12 @@ export async function GET() {
   if (isErrorResponse(result)) return result;
 
   const config = await prisma.appConfig.findUnique({ where: { id: "singleton" } });
-  if (!config) return NextResponse.json({ adminEmails: [], whatsappGroupLink: "" });
+  if (!config) return NextResponse.json({ adminEmails: [], whatsappGroupLink: "", leaderboardEnabled: false });
 
   return NextResponse.json({
     adminEmails: JSON.parse(config.adminEmails),
     whatsappGroupLink: config.whatsappGroupLink || "",
+    leaderboardEnabled: config.leaderboardEnabled ?? false,
   });
 }
 
@@ -39,6 +40,10 @@ export async function PUT(request: NextRequest) {
     update.whatsappGroupLink = data.whatsappGroupLink;
   }
 
+  if (typeof data.leaderboardEnabled === "boolean") {
+    update.leaderboardEnabled = data.leaderboardEnabled;
+  }
+
   const config = await prisma.appConfig.upsert({
     where: { id: "singleton" },
     update,
@@ -46,11 +51,13 @@ export async function PUT(request: NextRequest) {
       id: "singleton",
       adminEmails: update.adminEmails || JSON.stringify([ROOT_EMAIL]),
       whatsappGroupLink: update.whatsappGroupLink || null,
+      leaderboardEnabled: update.leaderboardEnabled ?? false,
     },
   });
 
   return NextResponse.json({
     adminEmails: JSON.parse(config.adminEmails),
     whatsappGroupLink: config.whatsappGroupLink || "",
+    leaderboardEnabled: config.leaderboardEnabled ?? false,
   });
 }

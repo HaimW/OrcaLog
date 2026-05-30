@@ -17,6 +17,7 @@ export default function AdminPage() {
 
   const [whatsappInput, setWhatsappInput] = useState("");
   const [adminEmailsInput, setAdminEmailsInput] = useState("");
+  const [leaderboardEnabled, setLeaderboardEnabled] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [users, setUsers] = useState<any[]>([]);
@@ -42,6 +43,7 @@ export default function AdminPage() {
       const c = await configRes.json();
       setWhatsappInput(c.whatsappGroupLink || "");
       setAdminEmailsInput((c.adminEmails || []).join(", "));
+      setLeaderboardEnabled(!!c.leaderboardEnabled);
     }
   }
 
@@ -54,7 +56,7 @@ export default function AdminPage() {
     await fetch("/api/config", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ adminEmails, whatsappGroupLink: whatsappInput }),
+      body: JSON.stringify({ adminEmails, whatsappGroupLink: whatsappInput, leaderboardEnabled }),
     });
     setSaving(false);
     setSaved(true);
@@ -214,6 +216,17 @@ export default function AdminPage() {
             </p>
           </div>
         )}
+        <div className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            id="leaderboard-toggle"
+            checked={leaderboardEnabled}
+            onChange={(e) => setLeaderboardEnabled(e.target.checked)}
+          />
+          <label htmlFor="leaderboard-toggle" className="text-sm">
+            {t("admin.leaderboardEnabled")}
+          </label>
+        </div>
         <div className="flex items-center gap-3">
           <button onClick={handleSaveConfig} disabled={saving} className="btn btn-primary">
             {saving ? "..." : t("admin.saveConfig")}

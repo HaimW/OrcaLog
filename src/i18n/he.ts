@@ -27,6 +27,7 @@ export const he: Record<string, string> = {
   "nav.stats": "סטטיסטיקה",
   "nav.admin": "ניהול",
   "nav.langToggle": "EN",
+  "nav.leaderboard": "דירוג",
 
   // List View
   "list.title": "יומן הצלילות שלי",
@@ -182,6 +183,29 @@ export const he: Record<string, string> = {
   "stats.noData": "אין נתונים עדיין",
   "stats.userFilter": "סנן לפי משתמש",
 
+  // Buddy System
+  "buddy.groupId": "מזהה טיול קבוצתי",
+  "buddy.startGroup": "צור מזהה קבוצה",
+  "buddy.groupDives": "צלילות קבוצתיות",
+  "buddy.noGroup": "אין טיול קבוצתי",
+  "buddy.groupHint": "שתף מזהה זה עם חברים לצלילה",
+
+  // Profile
+  "profile.title": "הפרופיל שלי",
+  "profile.showInLeaderboard": "הצג אותי בטבלת הדירוג",
+  "profile.emailNotifications": "התראות אימייל",
+  "profile.save": "שמור",
+  "profile.saved": "נשמר!",
+
+  // Leaderboard
+  "leaderboard.title": "טבלת דירוג",
+  "leaderboard.disabled": "הדירוג אינו פעיל כרגע",
+  "leaderboard.mostDives": "הכי הרבה צלילות החודש",
+  "leaderboard.heaviestCatch": "הציד הכבד ביותר",
+  "leaderboard.mostSpecies": "הכי הרבה מינים",
+  "leaderboard.deepestDive": "הצלילה העמוקה ביותר",
+  "leaderboard.optIn": "הצג אותי בטבלת הדירוג",
+
   // Admin View
   "admin.title": "ניהול",
   "admin.shortcuts": "קיצורי דרך",
@@ -193,6 +217,7 @@ export const he: Record<string, string> = {
   "admin.configSaved": "ההגדרות נשמרו!",
   "admin.userFilter": "סנן לפי משתמש",
   "admin.allUsers": "כל המשתמשים",
+  "admin.leaderboardEnabled": "הפעל טבלת דירוג",
 
   // Import / Export
   "io.export": "ייצוא JSON",
@@ -213,6 +238,11 @@ export const he: Record<string, string> = {
   "share.notes": "📝 {notes}",
   "share.copied": "הועתק ללוח!",
   "share.error": "שגיאה בשיתוף",
+
+  // Share link
+  "share.copyLink": "העתק קישור שיתוף",
+  "share.linkCopied": "הקישור הועתק!",
+  "share.viewEntry": "צפה בצלילה",
 
   // Confirm Modal
   "confirm.deleteEntry": "האם למחוק את הרשומה?",
@@ -237,6 +267,36 @@ export const he: Record<string, string> = {
   "error.generic": "אירעה שגיאה. נסה שוב.",
   "error.notFound": "הרשומה לא נמצאה",
   "error.unauthorized": "אין הרשאה לבצע פעולה זו",
+
+  // Stats Charts
+  "stats.divesPerMonth": "צלילות לפי חודש",
+  "stats.depthOverTime": "עומק לאורך זמן",
+
+  // Fishing Stats
+  "stats.fishing.title": "סטטיסטיקות דיג",
+  "stats.fishing.speciesPerSeason": "מינים לפי עונה",
+  "stats.fishing.avgWeight": "משקל ממוצע לפי מין",
+  "stats.fishing.releaseRate": "שיעור שחרור",
+  "stats.fishing.topLocations": "מיקומים פוריים לפי מין",
+
+  // Personal Records
+  "stats.records.title": "שיאים אישיים",
+  "stats.records.deepest": "צלילה עמוקה ביותר",
+  "stats.records.biggest": "הדג הגדול ביותר",
+  "stats.records.streak": "רצף ארוך ביותר",
+  "stats.records.mostProductive": "הצלילה הפורה ביותר",
+  "stats.records.days": "ימים",
+
+  // Seasons
+  "season.spring": "אביב",
+  "season.summer": "קיץ",
+  "season.fall": "סתיו",
+  "season.winter": "חורף",
+
+  // Map
+  "map.showMap": "הצג מפה",
+  "map.hideMap": "הסתר מפה",
+  "map.noCoords": "לא נרשמו קואורדינטות",
 
   // Units
   "unit.meters": "מ׳",

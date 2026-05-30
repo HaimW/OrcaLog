@@ -18,6 +18,8 @@ export async function GET() {
       units: true,
       theme: true,
       defaultLocation: true,
+      showInLeaderboard: true,
+      emailNotifications: true,
     },
   });
 
@@ -34,6 +36,8 @@ export async function PUT(request: NextRequest) {
   for (const key of allowed) {
     if (data[key] !== undefined) update[key] = data[key];
   }
+  if (typeof data.showInLeaderboard === 'boolean') update.showInLeaderboard = data.showInLeaderboard;
+  if (typeof data.emailNotifications === 'boolean') update.emailNotifications = data.emailNotifications;
 
   const user = await prisma.user.update({
     where: { id: result.id },
