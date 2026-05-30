@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar";
+
+const inter = Inter({ subsets: ["latin", "latin-ext"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   title: "OrcaLog",
@@ -10,16 +13,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="he" dir="rtl">
+    <html lang="he" dir="rtl" className={inter.variable}>
       <head>
-        {/* Prevent flash of wrong theme on load */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){var t=localStorage.getItem('orcalog_theme');if(t)document.documentElement.setAttribute('data-theme',t);})()`,
           }}
         />
       </head>
-      <body className="antialiased">
+      <body className={`antialiased ${inter.className}`}>
         <Providers>
           <ServiceWorkerRegistrar />
           {children}
